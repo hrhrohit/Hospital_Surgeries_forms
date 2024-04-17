@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { fetchDocumentsByDate } from '../firebaseConfig';
+import { fetchDocumentsByDate, updateDocument } from '../firebaseConfig'; // Ensure these functions are correctly imported
 
 function AnesthetistForm() {
     const [selectedDate, setSelectedDate] = useState(null);
     const [documents, setDocuments] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [currentDocId, setCurrentDocId] = useState(null);  // Store the current document's ID
+    const [anesthetistName, setAnesthetistName] = useState('');
+    const [surgeryTime, setSurgeryTime] = useState('');
+
+    useEffect(() => {
+        console.log("this is the current doc id", currentDocId);
+    }, [currentDocId])
 
     const handleDateChange = (date) => {
         setSelectedDate(date);
@@ -16,14 +24,43 @@ function AnesthetistForm() {
         event.preventDefault();
         if (selectedDate) {
             setLoading(true);
-            const formattedDate = selectedDate.toISOString().split('T')[0]; // Assuming the date is stored as yyyy-mm-dd in Firestore
+            const formattedDate = selectedDate.toISOString().split('T')[0];
             const fetchedDocuments = await fetchDocumentsByDate(formattedDate);
             setDocuments(fetchedDocuments);
             setLoading(false);
         } else {
-            setDocuments([]); // Clear documents if no date is selected
+            setDocuments([]);
         }
     };
+
+    const openModal = (docId) => {
+        setCurrentDocId(docId);
+        setModalIsOpen(true);
+    };
+
+    const closeModal = () => {
+        setModalIsOpen(false);
+    };
+
+    const handleSave = async (event) => {
+        event.preventDefault()
+        console.log('Attempting to save with Document ID:', currentDocId);
+        console.log('Data:', { anesthetistName, surgeryTime });
+        if (currentDocId) {
+            try {
+                await updateDocument(currentDocId, {
+                    anesthetistName,
+                    surgeryTime
+                }, "DocterDetails");
+                console.log("Document updated successfully");
+            } catch (error) {
+                console.error("Error updating document:", error);
+            }
+        }
+
+        closeModal();
+    };
+
 
     return (
         <div className="mt-4 p-4 bg-gray-100 rounded-md">
@@ -68,6 +105,9 @@ function AnesthetistForm() {
                                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Surgeon
                                     </th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        Actions
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -91,10 +131,46 @@ function AnesthetistForm() {
                                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                             {doc.surgeon}
                                         </td>
+                                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                            <button onClick={() => openModal(doc.id)} className="text-blue-500 hover:text-blue-800">
+                                                Edit
+                                            </button>
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
                         </table>
+                        {modalIsOpen && (
+                            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-4 border rounded shadow-lg">
+                                {/* <form onSubmit={handleSave}> */}
+                                    <h4 className="font-bold text-lg mb-4">Edit Anesthetist Details</h4>
+                                    <label>
+                                        Anesthetist Name:
+                                        <input
+                                            type="text"
+                                            value={anesthetistName}
+                                            onChange={(e) => setAnesthetistName(e.target.value)}
+                                            className="block w-full p-2 border"
+                                        />
+                                    </label>
+                                    <label>
+                                        Surgery Time:
+                                        <input
+                                            type="time"
+                                            value={surgeryTime}
+                                            onChange={(e) => setSurgeryTime(e.target.value)}
+                                            className="block w-full p-2 border"
+                                        />
+                                    </label>
+                                    <button type="button" onClick={handleSave} className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                                        Save
+                                    </button>
+                                    <button type="button" onClick={closeModal} className="mt-4 ml-4 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                                        Cancel
+                                    </button>
+                                {/* </form> */}
+                            </div>
+                        )}
                     </div>
                 )}
             </form>

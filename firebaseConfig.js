@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, query, where, getDocs } from "firebase/firestore";
+import { getFirestore, collection, addDoc, query, where, getDocs, updateDoc, doc } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -39,4 +39,15 @@ export const fetchDocumentsByDate = async (surgeryDate) => {
     documents.push({ id: doc.id, ...doc.data() });
   });
   return documents;
+};
+
+export const updateDocument = async (docId, updateData, collectionName) => {
+  const documentRef = doc(db, collectionName, docId);
+  try {
+    await updateDoc(documentRef, updateData);
+    console.log("Document updated with ID: ", docId);
+  } catch (error) {
+    console.error("Error updating document: ", error);
+    throw error; // Rethrow to handle it in the calling component
+  }
 };
