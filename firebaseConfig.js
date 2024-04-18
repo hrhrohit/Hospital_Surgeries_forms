@@ -51,3 +51,13 @@ export const updateDocument = async (docId, updateData, collectionName) => {
     throw error; // Rethrow to handle it in the calling component
   }
 };
+
+
+export const fetchNames = async (collectionName) => {
+  const surgeonNames = [];
+  const querySnapshot = await getDocs(collection(db, collectionName));
+  querySnapshot.forEach((doc) => {
+    surgeonNames.push(doc.data().name); // Assuming 'name' is the field you want
+  });
+  return surgeonNames;
+};

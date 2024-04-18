@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { fetchDocumentsByDate, updateDocument } from '../firebaseConfig';
+import { fetchDocumentsByDate, updateDocument, fetchNames } from '../firebaseConfig';
 
 function AnesthetistForm() {
     const [selectedDate, setSelectedDate] = useState(null);
@@ -10,14 +10,22 @@ function AnesthetistForm() {
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [currentDocId, setCurrentDocId] = useState(null);
     const [anesthetist, setAnesthetist] = useState('');
+    const [anesthetists, setAnesthetists] = useState('');
     const [surgeryTime, setSurgeryTime] = useState('');
     const [anesthetistTechnician, setAnesthetistTechnician] = useState("")
+    const [anesthetistTechnicians, setAnesthetistTechnicians] = useState("")
     const [ot, setOt] = useState("")
     const [anesthetistSubmitTime, setAnesthetistSubmitTime] = useState("");
 
     useEffect(() => {
-        console.log("this is the current doc id", currentDocId);
-    }, [currentDocId]);
+        async function loadNames() {
+            const fetchedAnesthetists = await fetchNames("AnesthetistDetails");
+            const fetchedTechnicians = await fetchNames("AnesthetistTechnicianDetails");
+            setAnesthetists(fetchedAnesthetists);
+            setAnesthetistTechnicians(fetchedTechnicians);
+        }
+        loadNames();
+    }, []);
 
     const handleDateChange = (date) => {
         setSelectedDate(date);
@@ -178,24 +186,30 @@ function AnesthetistForm() {
                                 <h4 className="font-bold text-lg mb-4">Edit Anesthetist Details</h4>
                                 <label>
                                     Anesthetist:
-                                    <input
-                                        type="text"
-                                        value={anesthetist}
-                                        onChange={(e) => setAnesthetist(e.target.value)}
-                                        className="block w-full p-2 border"
-                                    />
+                                    <select
+                                        value={anesthetistTechnician}
+                                        onChange={(e) => setAnesthetistTechnician(e.target.value)}
+                                        className="block w-full p-2 border">
+                                        <option value="">Select Technician</option>
+                                        {anesthetistTechnicians.map((name, index) => (
+                                            <option key={index} value={name}>{name}</option>
+                                        ))}
+                                    </select>
                                 </label>
                                 <label>
                                     Anesthetist technician:
-                                    <input
-                                        type="text"
+                                    <select
                                         value={anesthetistTechnician}
                                         onChange={(e) => setAnesthetistTechnician(e.target.value)}
-                                        className="block w-full p-2 border"
-                                    />
+                                        className="block w-full p-2 border">
+                                        <option value="">Select Technician</option>
+                                        {anesthetistTechnicians.map((name, index) => (
+                                            <option key={index} value={name}>{name}</option>
+                                        ))}
+                                    </select>
                                 </label>
                                 <label>
-                                   Operation Theatre:
+                                    Operation Theatre:
                                     <input
                                         type="text"
                                         value={ot}

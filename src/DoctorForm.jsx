@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { addUser } from '../firebaseConfig';
+import React, { useState, useEffect } from 'react';
+import { addUser, fetchNames } from '../firebaseConfig';
 
 function DoctorForm() {
     const [mrNo, setMrNo] = useState('');
@@ -7,10 +7,20 @@ function DoctorForm() {
     const [age, setAge] = useState('');
     const [sex, setSex] = useState('');
     const [surgeon, setSurgeon] = useState('');
+    const [surgeons, setSurgeons] = useState([]);
     const [surgicalProcedure, setSurgicalProcedure] = useState(" ")
     const [surgeryDate, setSurgeryDate] = useState('');
     const [doctorSubmitTime, setDoctorSubmitTime] = useState('')
     const [hospitalNumber, setHospitalNumber] = useState("")
+
+
+    useEffect(() => {
+        const loadSurgeons = async () => {
+            const names = await fetchNames("DoctorNameDetails");
+            setSurgeons(names);
+        };
+        loadSurgeons();
+    }, []);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -111,14 +121,17 @@ function DoctorForm() {
                     <label htmlFor="surgeon" className="block text-gray-700 font-medium">
                         Surgeon Name
                     </label>
-                    <input
-                        type="text"
+                    <select
                         id="surgeon"
                         value={surgeon}
                         onChange={(e) => setSurgeon(e.target.value)}
                         className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                        placeholder="Enter surgeon's name"
-                    />
+                        required>
+                        <option value="">Select Surgeon</option>
+                        {surgeons.map((name, index) => (
+                            <option key={index} value={name}>{name}</option>
+                        ))}
+                    </select>
                 </div>
                 <div className="mb-2">
                     <label htmlFor="surgicalProcedure" className="block text-gray-700 font-medium">

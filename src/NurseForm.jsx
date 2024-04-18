@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { fetchDocumentsByDate, updateDocument } from '../firebaseConfig';
+import { fetchDocumentsByDate, updateDocument, fetchNames } from '../firebaseConfig';
 
 function NurseForm() {
     const [selectedDate, setSelectedDate] = useState(null);
@@ -11,12 +11,21 @@ function NurseForm() {
     const [currentDocId, setCurrentDocId] = useState(null);
     const [ward, setWard] = useState('');
     const [scrubNurse, setScrubNurse] = useState('');
+    const [scrubNurses, setScrubNurses] = useState([]);
     const [circulatingNurse, setCirculatingNurse] = useState('');
+    const [circulatingNurses, setCirculatingNurses] = useState([]);
     const [room, setRoom] = useState('');
 
+
     useEffect(() => {
-        console.log("this is the current doc id", currentDocId);
-    }, [currentDocId]);
+        async function loadNurseNames() {
+            const scrubNurseNames = await fetchNames("ScrubNurseDetails");
+            const circulatingNurseNames = await fetchNames("CirculatingNurseDetails");
+            setScrubNurses(scrubNurseNames);
+            setCirculatingNurses(circulatingNurseNames);
+        }
+        loadNurseNames();
+    }, []);
 
     const handleDateChange = (date) => {
         setSelectedDate(date);
@@ -180,21 +189,27 @@ function NurseForm() {
                                 </label>
                                 <label>
                                     Scrub Nurse:
-                                    <input
-                                        type="text"
+                                    <select
                                         value={scrubNurse}
                                         onChange={(e) => setScrubNurse(e.target.value)}
-                                        className="block w-full p-2 border"
-                                    />
+                                        className="block w-full p-2 border">
+                                        <option value="">Select Scrub Nurse</option>
+                                        {scrubNurses.map((name, index) => (
+                                            <option key={index} value={name}>{name}</option>
+                                        ))}
+                                    </select>
                                 </label>
                                 <label>
                                     Circulating Nurse:
-                                    <input
-                                        type="text"
+                                    <select
                                         value={circulatingNurse}
                                         onChange={(e) => setCirculatingNurse(e.target.value)}
-                                        className="block w-full p-2 border"
-                                    />
+                                        className="block w-full p-2 border">
+                                        <option value="">Select Circulating Nurse</option>
+                                        {circulatingNurses.map((name, index) => (
+                                            <option key={index} value={name}>{name}</option>
+                                        ))}
+                                    </select>
                                 </label>
                                 <label>
                                     Room:
