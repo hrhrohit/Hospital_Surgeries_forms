@@ -6,22 +6,29 @@ function DoctorForm() {
     const [patientName, setPatientName] = useState('');
     const [age, setAge] = useState('');
     const [sex, setSex] = useState('');
-    const [room, setRoom] = useState('');
     const [surgeon, setSurgeon] = useState('');
+    const [surgicalProcedure, setSurgicalProcedure] = useState(" ")
     const [surgeryDate, setSurgeryDate] = useState('');
+    const [doctorSubmitTime, setDoctorSubmitTime] = useState('')
+    const [hospitalNumber, setHospitalNumber] = useState("")
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
+        console.log("this is the time time stamp", timestamp);
+        setDoctorSubmitTime[timestamp]
         try {
             const newDocId = await addUser({
                 mrNo,
                 patientName,
                 age: parseInt(age, 10), // Ensuring age is stored as a number
                 sex,
-                room,
                 surgeon,
-                surgeryDate
-            }, "DocterDetails");
+                hospitalNumber,
+                surgicalProcedure,
+                surgeryDate,
+                doctorSubmitTime: timestamp
+            }, "DoctorDetails");
             console.log('Document added with ID:', newDocId);
             // Optionally, clear form or notify the user of success
         } catch (error) {
@@ -88,16 +95,16 @@ function DoctorForm() {
                     </select>
                 </div>
                 <div className="mb-2">
-                    <label htmlFor="room" className="block text-gray-700 font-medium">
-                        Room
+                    <label htmlFor="hospitalNumber" className="block text-gray-700 font-medium">
+                        Hospital Name
                     </label>
                     <input
                         type="text"
-                        id="room"
-                        value={room}
-                        onChange={(e) => setRoom(e.target.value)}
+                        id="hospitalNumber"
+                        value={hospitalNumber}
+                        onChange={(e) => setHospitalNumber(e.target.value)}
                         className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                        placeholder="Enter room number"
+                        placeholder="Enter Hospital Name"
                     />
                 </div>
                 <div className="mb-2">
@@ -111,6 +118,19 @@ function DoctorForm() {
                         onChange={(e) => setSurgeon(e.target.value)}
                         className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
                         placeholder="Enter surgeon's name"
+                    />
+                </div>
+                <div className="mb-2">
+                    <label htmlFor="surgicalProcedure" className="block text-gray-700 font-medium">
+                        Surgical Procedure
+                    </label>
+                    <input
+                        type="text"
+                        id="surgicalProcedure"
+                        value={surgicalProcedure}
+                        onChange={(e) => setSurgicalProcedure(e.target.value)}
+                        className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        placeholder="Enter surgical procedure"
                     />
                 </div>
                 <div className="mb-2">

@@ -30,7 +30,7 @@ export const addUser = async (userData, Collectionname) => {
 };
 
 export const fetchDocumentsByDate = async (surgeryDate) => {
-  const q = query(collection(db, "DocterDetails"), 
+  const q = query(collection(db, "DoctorDetails"), 
   where("surgeryDate", "==", surgeryDate)
 );
   const querySnapshot = await getDocs(q);

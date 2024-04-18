@@ -3,17 +3,16 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { fetchDocumentsByDate, updateDocument } from '../firebaseConfig';
 
-function AnesthetistForm() {
+function NurseForm() {
     const [selectedDate, setSelectedDate] = useState(null);
     const [documents, setDocuments] = useState([]);
     const [loading, setLoading] = useState(false);
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [currentDocId, setCurrentDocId] = useState(null);
-    const [anesthetist, setAnesthetist] = useState('');
-    const [surgeryTime, setSurgeryTime] = useState('');
-    const [anesthetistTechnician, setAnesthetistTechnician] = useState("")
-    const [ot, setOt] = useState("")
-    const [anesthetistSubmitTime, setAnesthetistSubmitTime] = useState("");
+    const [ward, setWard] = useState('');
+    const [scrubNurse, setScrubNurse] = useState('');
+    const [circulatingNurse, setCirculatingNurse] = useState('');
+    const [room, setRoom] = useState('');
 
     useEffect(() => {
         console.log("this is the current doc id", currentDocId);
@@ -51,11 +50,11 @@ function AnesthetistForm() {
             const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
             try {
                 await updateDocument(currentDocId, {
-                    anesthetist,
-                    anesthetistTechnician,
-                    ot,
-                    surgeryTime,
-                    anesthetistSubmitTime: timestamp
+                    ward,
+                    scrubNurse,
+                    circulatingNurse,
+                    room,
+                    nurseSubmitTime: timestamp // Now correctly using the generated timestamp
                 }, "DoctorDetails");
                 console.log("Document updated successfully");
             } catch (error) {
@@ -67,7 +66,7 @@ function AnesthetistForm() {
 
     return (
         <div className="mt-4 p-4 bg-gray-100 rounded-md">
-            <h2 className="text-lg font-bold mb-2">Anesthetist Form</h2>
+            <h2 className="text-lg font-bold mb-2">Nurse Form</h2>
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
                     <label htmlFor="surgeryDate" className="block text-gray-700 font-medium">
@@ -91,37 +90,34 @@ function AnesthetistForm() {
                             <thead>
                                 <tr>
                                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Patient Name
-                                    </th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         MR No
                                     </th>
                                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Age
+                                        Patient Name
                                     </th>
                                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Sex
                                     </th>
                                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Surgeon
+                                        Age
                                     </th>
                                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Hospital Number
                                     </th>
                                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        Surgeon
+                                    </th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Surgical Procedure
                                     </th>
                                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Circulating Nurse
+                                        Anesthetist
                                     </th>
                                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Scrub Nurse
+                                        Anesthetist Technician
                                     </th>
                                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Ward
-                                    </th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Room
+                                        Surgery Time
                                     </th>
                                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Actions
@@ -132,37 +128,34 @@ function AnesthetistForm() {
                                 {documents.map(doc => (
                                     <tr key={doc.id}>
                                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                            {doc.patientName}
-                                        </td>
-                                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                             {doc.mrNo}
                                         </td>
                                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                            {doc.age}
+                                            {doc.patientName}
                                         </td>
                                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                             {doc.sex}
                                         </td>
                                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                            {doc.surgeon}
+                                            {doc.age}
                                         </td>
                                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                             {doc.hospitalNumber}
                                         </td>
                                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                            {doc.surgeon}
+                                        </td>
+                                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                             {doc.surgicalProcedure}
                                         </td>
                                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                            {doc.circulatingNurse}
+                                            {doc.anesthetist}
                                         </td>
                                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                            {doc.scrubNurse}
+                                            {doc.anesthetistTechnician}
                                         </td>
                                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                            {doc.ward}
-                                        </td>
-                                        <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                            {doc.room}
+                                            {doc.surgeryTime}
                                         </td>
                                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                             <button onClick={() => openModal(doc.id)} className="text-blue-500 hover:text-blue-800">
@@ -175,40 +168,40 @@ function AnesthetistForm() {
                         </table>
                         {modalIsOpen && (
                             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-4 border rounded shadow-lg">
-                                <h4 className="font-bold text-lg mb-4">Edit Anesthetist Details</h4>
+                                <h4 className="font-bold text-lg mb-4">Edit Nurse Details</h4>
                                 <label>
-                                    Anesthetist:
+                                    Ward:
                                     <input
                                         type="text"
-                                        value={anesthetist}
-                                        onChange={(e) => setAnesthetist(e.target.value)}
+                                        value={ward}
+                                        onChange={(e) => setWard(e.target.value)}
                                         className="block w-full p-2 border"
                                     />
                                 </label>
                                 <label>
-                                    Anesthetist technician:
+                                    Scrub Nurse:
                                     <input
                                         type="text"
-                                        value={anesthetistTechnician}
-                                        onChange={(e) => setAnesthetistTechnician(e.target.value)}
+                                        value={scrubNurse}
+                                        onChange={(e) => setScrubNurse(e.target.value)}
                                         className="block w-full p-2 border"
                                     />
                                 </label>
                                 <label>
-                                   Operation Theatre:
+                                    Circulating Nurse:
                                     <input
                                         type="text"
-                                        value={ot}
-                                        onChange={(e) => setOt(e.target.value)}
+                                        value={circulatingNurse}
+                                        onChange={(e) => setCirculatingNurse(e.target.value)}
                                         className="block w-full p-2 border"
                                     />
                                 </label>
                                 <label>
-                                    Surgery Time:
+                                    Room:
                                     <input
-                                        type="time"
-                                        value={surgeryTime}
-                                        onChange={(e) => setSurgeryTime(e.target.value)}
+                                        type="text"
+                                        value={room}
+                                        onChange={(e) => setRoom(e.target.value)}
                                         className="block w-full p-2 border"
                                     />
                                 </label>
@@ -227,4 +220,4 @@ function AnesthetistForm() {
     );
 }
 
-export default AnesthetistForm;
+export default NurseForm;
