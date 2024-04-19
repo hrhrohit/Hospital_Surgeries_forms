@@ -14,11 +14,13 @@ function App() {
 
   const handleLogin = async (role, passKey) => {
     try {
-      const keys = await fetchPassKeys();
-      if ((role === 'doctor' && passKey === keys.doctorPass) || (role === 'super' && passKey === keys.superPass)) {
+      const keys = await fetchPassKeys();  // Make sure fetchPassKeys can handle all roles correctly
+      if ((role === 'doctor' && passKey === keys.doctorPass) ||
+          (role === 'anesthetist' && passKey === keys.AnesthPass) ||
+          (role === 'nurse' && passKey === keys.nursePass)) {
         setIsAuthenticated(true);
         setUserRole(role);
-        setActivePage(role === 'super' ? 'anesthetist' : ''); // Default page for super
+        setActivePage(role);  // Set the default active page based on the role
       } else {
         alert('Incorrect Pass Key');
       }
@@ -28,7 +30,11 @@ function App() {
   };
 
   const handleOptionClick = (option) => {
-    setActivePage(option); // Update the active page
+    if (userRole === option) {
+      setActivePage(option); // Update the active page if the user has access
+    } else {
+      alert('Access Denied');
+    }
   };
 
   const handleHomeClick = () => {
@@ -44,9 +50,9 @@ function App() {
       ) : (
         <>
           <Navbar onHomeClick={handleHomeClick} onOptionClick={handleOptionClick} userRole={userRole} activePage={activePage} />
-          {userRole === 'doctor' && <DoctorForm />}
-          {userRole === 'super' && activePage === 'anesthetist' && <AnesthetistForm />}
-          {userRole === 'super' && activePage === 'nurse' && <NurseForm />}
+          {userRole === 'doctor' && activePage === 'doctor' && <DoctorForm />}
+          {userRole === 'anesthetist' && activePage === 'anesthetist' && <AnesthetistForm />}
+          {userRole === 'nurse' && activePage === 'nurse' && <NurseForm />}
         </>
       )}
     </div>
