@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, query, where, getDocs, updateDoc, doc } from "firebase/firestore";
+import { getFirestore, collection, addDoc, query, where, getDocs, updateDoc, doc, getDoc } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -60,4 +60,22 @@ export const fetchNames = async (collectionName) => {
     surgeonNames.push(doc.data().name); // Assuming 'name' is the field you want
   });
   return surgeonNames;
+};
+
+
+// Function to fetch pass keys based on the role
+export const fetchPassKeys = async () => {
+  const passKeyDocRef = doc(db, "passKey", "passKey"); // Assume 'config' is the collection and 'passKeys' is the document ID
+  try {
+    const docSnap = await getDoc(passKeyDocRef);
+    if (docSnap.exists()) {
+      return docSnap.data();
+    } else {
+      console.log("No pass key data available");
+      return null;
+    }
+  } catch (error) {
+    console.error("Failed to fetch pass keys:", error);
+    throw new Error("Failed to fetch pass keys");
+  }
 };
