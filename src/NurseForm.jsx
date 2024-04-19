@@ -168,7 +168,7 @@ function NurseForm() {
                                         </td>
                                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                             <button onClick={() => openModal(doc.id)} className="text-blue-500 hover:text-blue-800">
-                                                Edit
+                                                Add
                                             </button>
                                         </td>
                                     </tr>

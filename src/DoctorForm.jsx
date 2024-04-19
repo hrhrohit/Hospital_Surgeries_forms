@@ -8,11 +8,10 @@ function DoctorForm() {
     const [sex, setSex] = useState('');
     const [surgeon, setSurgeon] = useState('');
     const [surgeons, setSurgeons] = useState([]);
-    const [surgicalProcedure, setSurgicalProcedure] = useState(" ")
+    const [surgicalProcedure, setSurgicalProcedure] = useState('');
     const [surgeryDate, setSurgeryDate] = useState('');
-    const [doctorSubmitTime, setDoctorSubmitTime] = useState('')
-    const [hospitalNumber, setHospitalNumber] = useState("")
-
+    const [hospitalNumber, setHospitalNumber] = useState('');
+    const [submitSuccess, setSubmitSuccess] = useState(false);  // State to handle success message visibility
 
     useEffect(() => {
         const loadSurgeons = async () => {
@@ -25,13 +24,11 @@ function DoctorForm() {
     const handleSubmit = async (event) => {
         event.preventDefault();
         const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
-        console.log("this is the time time stamp", timestamp);
-        setDoctorSubmitTime[timestamp]
         try {
             const newDocId = await addUser({
                 mrNo,
                 patientName,
-                age: parseInt(age, 10), // Ensuring age is stored as a number
+                age: parseInt(age, 10),  // Ensuring age is stored as a number
                 sex,
                 surgeon,
                 hospitalNumber,
@@ -40,7 +37,18 @@ function DoctorForm() {
                 doctorSubmitTime: timestamp
             }, "DoctorDetails");
             console.log('Document added with ID:', newDocId);
-            // Optionally, clear form or notify the user of success
+            // Reset form fields
+            setMrNo("");
+            setPatientName("");
+            setAge("");
+            setSex("");
+            setSurgeon("");
+            setSurgicalProcedure("");
+            setSurgeryDate("");
+            setHospitalNumber("");
+            // Show success message
+            setSubmitSuccess(true);
+            setTimeout(() => setSubmitSuccess(false), 5000);  // Hide the success message after 5 seconds
         } catch (error) {
             console.error('Error adding document:', error);
             // Optionally, notify the user of the failure
@@ -50,6 +58,11 @@ function DoctorForm() {
     return (
         <div className="mt-4 p-4 bg-gray-100 rounded-md">
             <h2 className="text-lg font-bold mb-2">Doctor Form</h2>
+            {submitSuccess && (
+                <div className="p-3 bg-green-200 text-green-800 rounded-md mb-3">
+                    Submission successful!
+                </div>
+            )}
             <form onSubmit={handleSubmit}>
                 <div className="mb-2">
                     <label htmlFor="mrNo" className="block text-gray-700 font-medium">
@@ -106,7 +119,7 @@ function DoctorForm() {
                 </div>
                 <div className="mb-2">
                     <label htmlFor="hospitalNumber" className="block text-gray-700 font-medium">
-                        Hospital Name
+                        Department
                     </label>
                     <input
                         type="text"
@@ -114,7 +127,7 @@ function DoctorForm() {
                         value={hospitalNumber}
                         onChange={(e) => setHospitalNumber(e.target.value)}
                         className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                        placeholder="Enter Hospital Name"
+                        placeholder="Enter hospital name"
                     />
                 </div>
                 <div className="mb-2">
@@ -158,9 +171,26 @@ function DoctorForm() {
                         className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
                 </div>
-                <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                {submitSuccess ? (
+                    <button
+                        type="button" // Change type if it should not submit a form anymore
+                        className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+                        disabled
+                    >
+                        Submitted Successfully
+                    </button>
+                ) : (
+                    <button
+                        type="submit"
+                        className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                    >
+                        Submit
+                    </button>
+                )}
+
+                {/* <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
                     Submit
-                </button>
+                </button> */}
             </form>
         </div>
     );

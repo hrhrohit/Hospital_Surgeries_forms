@@ -30,7 +30,7 @@ function LandingPage({ onLogin }) {
           onClick={() => handleSignIn('super')}
           className="bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hover:bg-green-600 transition duration-300"
         >
-          Sign in as Super
+          Sign in as 
         </button>
       </div>
 
