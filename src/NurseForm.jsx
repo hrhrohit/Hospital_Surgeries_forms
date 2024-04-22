@@ -15,6 +15,7 @@ function NurseForm() {
     const [circulatingNurse, setCirculatingNurse] = useState('');
     const [circulatingNurses, setCirculatingNurses] = useState([]);
     const [room, setRoom] = useState('');
+    const [submitSuccess, setSubmitSuccess] = useState(false)
 
 
     useEffect(() => {
@@ -35,7 +36,12 @@ function NurseForm() {
         event.preventDefault();
         if (selectedDate) {
             setLoading(true);
-            const formattedDate = selectedDate.toISOString().split('T')[0];
+            // Construct date string in yyyy-mm-dd format
+            const year = selectedDate.getFullYear();
+            const month = selectedDate.getMonth() + 1; // Month is zero-based
+            const day = selectedDate.getDate();
+            const formattedDate = `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
+            // Fetch documents using the formatted date
             const fetchedDocuments = await fetchDocumentsByDate(formattedDate);
             setDocuments(fetchedDocuments);
             setLoading(false);
@@ -65,6 +71,10 @@ function NurseForm() {
                     room,
                     nurseSubmitTime: timestamp // Now correctly using the generated timestamp
                 }, "DoctorDetails");
+                setSubmitSuccess(true)
+                setTimeout(() => {
+                    setSubmitSuccess(false)
+                }, 3000);
                 console.log("Document updated successfully");
             } catch (error) {
                 console.error("Error updating document:", error);
@@ -91,6 +101,9 @@ function NurseForm() {
                 <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none">
                     Fetch Records
                 </button>
+                {submitSuccess && <div className='p-3 bg-green-200 text-green-800 rounded-md mb-3 mt-2'>
+                    Submission Succesfulll
+                </div>}
                 {loading && <p>Loading...</p>}
                 {!loading && documents.length > 0 && (
                     <div className="mt-4">
@@ -149,7 +162,7 @@ function NurseForm() {
                                             {doc.age}
                                         </td>
                                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                            {doc.hospitalNumber}
+                                            {doc.department}
                                         </td>
                                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                             {doc.surgeon}

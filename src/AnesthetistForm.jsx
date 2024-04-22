@@ -36,7 +36,12 @@ function AnesthetistForm() {
         event.preventDefault();
         if (selectedDate) {
             setLoading(true);
-            const formattedDate = selectedDate.toISOString().split('T')[0];
+            // Construct date string in yyyy-mm-dd format
+            const year = selectedDate.getFullYear();
+            const month = selectedDate.getMonth() + 1; // Month is zero-based
+            const day = selectedDate.getDate();
+            const formattedDate = `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
+            // Fetch documents using the formatted date
             const fetchedDocuments = await fetchDocumentsByDate(formattedDate);
             setDocuments(fetchedDocuments);
             setLoading(false);
@@ -67,7 +72,7 @@ function AnesthetistForm() {
                     anesthetistSubmitTime: timestamp
                 }, "DoctorDetails");
                 setSubmitSuccess(true);
-                setTimeout(() => setSubmitSuccess(false, 3000))
+                setTimeout(() => setSubmitSuccess(false), 3000);
                 console.log("Document updated successfully");
             } catch (error) {
                 console.error("Error updating document:", error);
@@ -164,7 +169,7 @@ function AnesthetistForm() {
                                             {doc.surgeon}
                                         </td>
                                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                            {doc.hospitalNumber}
+                                            {doc.department}
                                         </td>
                                         <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                             {doc.surgicalProcedure}
@@ -196,11 +201,11 @@ function AnesthetistForm() {
                                 <label>
                                     Anesthetist:
                                     <select
-                                        value={anesthetistTechnician}
-                                        onChange={(e) => setAnesthetistTechnician(e.target.value)}
+                                        value={anesthetist}
+                                        onChange={(e) => setAnesthetist(e.target.value)}
                                         className="block w-full p-2 border">
                                         <option value="">Select Technician</option>
-                                        {anesthetistTechnicians.map((name, index) => (
+                                        {anesthetists.map((name, index) => (
                                             <option key={index} value={name}>{name}</option>
                                         ))}
                                     </select>

@@ -10,7 +10,7 @@ function DoctorForm() {
     const [surgeons, setSurgeons] = useState([]);
     const [surgicalProcedure, setSurgicalProcedure] = useState('');
     const [surgeryDate, setSurgeryDate] = useState('');
-    const [hospitalNumber, setHospitalNumber] = useState('');
+    const [department, setDepartment] = useState('');
     const [submitSuccess, setSubmitSuccess] = useState(false);  // State to handle success message visibility
 
     useEffect(() => {
@@ -31,7 +31,7 @@ function DoctorForm() {
                 age: parseInt(age, 10),  // Ensuring age is stored as a number
                 sex,
                 surgeon,
-                hospitalNumber,
+                department,
                 surgicalProcedure,
                 surgeryDate,
                 doctorSubmitTime: timestamp
@@ -45,7 +45,7 @@ function DoctorForm() {
             setSurgeon("");
             setSurgicalProcedure("");
             setSurgeryDate("");
-            setHospitalNumber("");
+            setDepartment("");
             // Show success message
             setSubmitSuccess(true);
             setTimeout(() => setSubmitSuccess(false), 5000);  // Hide the success message after 5 seconds
@@ -118,14 +118,14 @@ function DoctorForm() {
                     </select>
                 </div>
                 <div className="mb-2">
-                    <label htmlFor="hospitalNumber" className="block text-gray-700 font-medium">
+                    <label htmlFor="department" className="block text-gray-700 font-medium">
                         Department
                     </label>
                     <input
                         type="text"
-                        id="hospitalNumber"
-                        value={hospitalNumber}
-                        onChange={(e) => setHospitalNumber(e.target.value)}
+                        id="department"
+                        value={department}
+                        onChange={(e) => setDepartment(e.target.value)}
                         className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
                         placeholder="Enter hospital name"
                     />
