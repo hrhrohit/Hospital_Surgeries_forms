@@ -16,6 +16,7 @@ function AnesthetistForm() {
     const [anesthetistTechnicians, setAnesthetistTechnicians] = useState("")
     const [ot, setOt] = useState("")
     const [anesthetistSubmitTime, setAnesthetistSubmitTime] = useState("");
+    const [submitSuccess, setSubmitSuccess] = useState(false)
 
     useEffect(() => {
         async function loadNames() {
@@ -65,6 +66,8 @@ function AnesthetistForm() {
                     surgeryTime,
                     anesthetistSubmitTime: timestamp
                 }, "DoctorDetails");
+                setSubmitSuccess(true);
+                setTimeout(() => setSubmitSuccess(false, 3000))
                 console.log("Document updated successfully");
             } catch (error) {
                 console.error("Error updating document:", error);
@@ -91,6 +94,12 @@ function AnesthetistForm() {
                 <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none">
                     Fetch Records
                 </button>
+                {
+                    submitSuccess &&
+                    <div className="p-3 bg-green-200 text-green-800 rounded-md mb-3 mt-2">
+                        Submission successful!
+                    </div>
+                }
                 {loading && <p>Loading...</p>}
                 {!loading && documents.length > 0 && (
                     <div className="mt-4">
